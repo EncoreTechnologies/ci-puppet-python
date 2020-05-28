@@ -204,7 +204,6 @@ requirements:
 	@echo
 	@echo "==================== requirements ===================="
 	@echo
-	cat ~/.pydistutils.cfg
 	ls $(PYTHON_CI_DIR)
 	ls $(VIRTUALENV_DIR)
 	ls $(VIRTUALENV_DIR)/bin
@@ -218,17 +217,15 @@ virtualenv:
 	@echo
 	@echo "==================== virtualenv ===================="
 	@echo
-# if [ ! -d "$(VIRTUALENV_DIR)" ]; then \
-# 	if [ "$(PYTHON_EXE)" = "python3" ]; then \
-# 		$(PYTHON_EXE) -m venv $(VIRTUALENV_DIR); \
-# 	else \
-# 		virtualenv --python=$(PYTHON_EXE) $(VIRTUALENV_DIR);\
-# 	fi; \
-# fi;
+# prefer using virtualenv command if it exists, because this works properly in travis
+# for some reason doing python3 -m venv in travis doesn't give us a pip executable
 	if [ ! -d "$(VIRTUALENV_DIR)" ]; then \
-		virtualenv --python=$(PYTHON_EXE) $(VIRTUALENV_DIR);\
+		if command -v virtualenv > /dev/null 2>&1; then \
+			virtualenv --python=$(PYTHON_EXE) $(VIRTUALENV_DIR);\
+		else \
+			$(PYTHON_EXE) -m venv $(VIRTUALENV_DIR); \
+		fi; \
 	fi;
-
 
 .PHONY: .clean-virtualenv
 .clean-virtualenv:
