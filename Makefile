@@ -204,6 +204,9 @@ requirements:
 	@echo
 	@echo "==================== requirements ===================="
 	@echo
+	ls $(PYTHON_CI_DIR)
+	ls $(VIRTUALENV_DIR)
+	ls $(VIRTUALENV_DIR)/bin
 	. $(VIRTUALENV_DIR)/bin/activate; \
 	$(VIRTUALENV_DIR)/bin/$(PIP_EXE) install --upgrade pip; \
 	$(VIRTUALENV_DIR)/bin/$(PIP_EXE) install --cache-dir $(HOME)/.pip-cache -q -r $(CI_DIR)/requirements-dev.txt -r $(CI_DIR)/requirements-test.txt;
