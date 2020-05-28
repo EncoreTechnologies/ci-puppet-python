@@ -22,6 +22,7 @@ PYTHON_EXE ?= python
 PYTHON_VERSION = $(shell $(PYTHON_EXE) --version 2>&1 | awk '{ print $$2 }')
 PYTHON_NAME = python$(PYTHON_VERSION)
 PYTHON_CI_DIR = $(ROOT_DIR)/$(PYTHON_NAME)
+PIP_EXE ?= pip
 VIRTUALENV_NAME ?= virtualenv
 VIRTUALENV_DIR ?= $(PYTHON_CI_DIR)/$(VIRTUALENV_NAME)
 
@@ -204,8 +205,8 @@ requirements:
 	@echo "==================== requirements ===================="
 	@echo
 	. $(VIRTUALENV_DIR)/bin/activate; \
-	$(VIRTUALENV_DIR)/bin/pip install --upgrade pip; \
-	$(VIRTUALENV_DIR)/bin/pip install --cache-dir $(HOME)/.pip-cache -q -r $(CI_DIR)/requirements-dev.txt -r $(CI_DIR)/requirements-test.txt;
+	$(VIRTUALENV_DIR)/bin/$(PIP_EXE) install --upgrade pip; \
+	$(VIRTUALENV_DIR)/bin/$(PIP_EXE) install --cache-dir $(HOME)/.pip-cache -q -r $(CI_DIR)/requirements-dev.txt -r $(CI_DIR)/requirements-test.txt;
 
 
 .PHONY: virtualenv
@@ -234,7 +235,9 @@ virtualenv:
 	@echo "==================== python2 ===================="
 	@echo
 	$(eval PYTHON_EXE=python2)
+	$(eval PIP_EXE=pip2)
 	@echo "PYTHON_EXE=$(PYTHON_EXE)"
+	@echo "PIP_EXE=$(PIP_EXE)"
 
 # setup python3 executable
 .PHONY: .python3
@@ -243,7 +246,9 @@ virtualenv:
 	@echo "==================== python3 ===================="
 	@echo
 	$(eval PYTHON_EXE=python3)
+	$(eval PIP_EXE=pip3)
 	@echo "PYTHON_EXE=$(PYTHON_EXE)"
+	@echo "PIP_EXE=$(PIP_EXE)"
 
 # initialize PYTHON_EXE dependent variables
 .PHONY: .pythonvars
