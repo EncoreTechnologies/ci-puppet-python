@@ -14,9 +14,16 @@ CI_DIR ?= $(ROOT_DIR)
 YAML_FILES := $(shell git ls-files '*.yaml' '*.yml')
 JSON_FILES := $(shell git ls-files '*.json')
 PY_FILES   := $(shell git ls-files '*.py')
-VIRTUALENV_DIR ?= $(ROOT_DIR)/virtualenv
 SANDBOX_DIR ?= $(ROOT_DIR)/sandbox
 TEST_COVERAGE_DIR ?= $(ROOT_DIR)/cover
+
+### python 2/3 specific stuff
+PYTHON_EXE ?= python
+PYTHON_VERSION = $(shell $(PYTHON_EXE) --version 2>&1 | awk '{ print $$2 }')
+PYTHON_NAME = python$(PYTHON_VERSION)
+PYTHON_CI_DIR = $(ROOT_DIR)/$(PYTHON_NAME)
+VIRTUALENV_NAME ?= virtualenv
+VIRTUALENV_DIR ?= $(PYTHON_CI_DIR)/$(VIRTUALENV_NAME)
 
 space_char :=
 space_char +=
@@ -31,37 +38,43 @@ PYMODULE_PYTHON_FILES_BASENAME := $(basename $(PYMODULE_PYTHON_FILES_NOTDIR))
 PYMODULE_PYTHON_FILES_COMMA := $(subst $(space_char),$(comma),$(PYMODULE_PYTHON_FILES_BASENAME))
 
 .PHONY: all
-all: requirements lint test-python test-coveralls
+all: virtualenv requirements lint test-python test-coveralls
+
+.PHONY: python2
+python2: .python2 .pythonvars all
+
+.PHONY: python3
+python3: .python3 .pythonvars all
 
 .PHONY: clean
 clean: .clean-virtualenv .clean-test-coverage .clean-sandbox
 
 .PHONY: lint
-lint: requirements flake8 pylint json-lint yaml-lint
+lint: virtualenv requirements flake8 pylint json-lint yaml-lint
 
 .PHONY: flake8
-flake8: requirements .flake8
+flake8: virtualenv requirements .flake8
 
 .PHONY: pylint
-pylint: requirements .pylint
+pylint: virtualenv requirements .pylint
 
 .PHONY: json-lint
-pylint: requirements .json-lint
+pylint: virtualenv requirements .json-lint
 
 .PHONY: yaml-lint
-pylint: requirements .yaml-lint
+pylint: virtualenv requirements .yaml-lint
 
 .PHONY: sandbox
 sandbox: .sandbox
 
 .PHONY: test-python
-test-python: requirements sandbox .test-python
+test-python: virtualenv requirements sandbox .test-python
 
 .PHONY: test-coverage-html
-test-coverage-html: requirements .test-coverage-html
+test-coverage-html: virtualenv requirements .test-coverage-html
 
 .PHONY: test-coveralls
-test-coveralls: requirements .test-coveralls
+test-coveralls: virtualenv requirements .test-coveralls
 
 .PHONY: clean-test-coverage
 clean-test-coverage: .clean-test-coverage
@@ -186,7 +199,7 @@ list:
 
 
 .PHONY: requirements
-requirements: virtualenv
+requirements:
 	@echo
 	@echo "==================== requirements ===================="
 	@echo
@@ -196,19 +209,56 @@ requirements: virtualenv
 
 
 .PHONY: virtualenv
-virtualenv: $(VIRTUALENV_DIR)/bin/activate
-$(VIRTUALENV_DIR)/bin/activate:
+virtualenv:
 	@echo
 	@echo "==================== virtualenv ===================="
 	@echo
-	test -d $(VIRTUALENV_DIR) || virtualenv --no-site-packages $(VIRTUALENV_DIR)
-
+	if [ ! -d "$(VIRTUALENV_DIR)" ]; then \
+		if [ "$(PYTHON_EXE)" = "python3" ]; then \
+			$(PYTHON_EXE) -m venv $(VIRTUALENV_DIR); \
+		else \
+			virtualenv --python=$(PYTHON_EXE) $(VIRTUALENV_DIR);\
+		fi; \
+	fi;
 
 .PHONY: .clean-virtualenv
 .clean-virtualenv:
 	@echo "==================== cleaning virtualenv ===================="
 	rm -rf $(VIRTUALENV_DIR)
+	rm -rf $(CI_DIR)/python*
 
+# setup python2 executable
+.PHONY: .python2
+.python2:
+	@echo
+	@echo "==================== python2 ===================="
+	@echo
+	$(eval PYTHON_EXE=python2)
+	@echo "PYTHON_EXE=$(PYTHON_EXE)"
+
+# setup python3 executable
+.PHONY: .python3
+.python3:
+	@echo
+	@echo "==================== python3 ===================="
+	@echo
+	$(eval PYTHON_EXE=python3)
+	@echo "PYTHON_EXE=$(PYTHON_EXE)"
+
+# initialize PYTHON_EXE dependent variables
+.PHONY: .pythonvars
+.pythonvars:
+	@echo
+	@echo "==================== pythonvars ===================="
+	@echo
+	$(eval PYTHON_VERSION=$(shell $(PYTHON_EXE) --version 2>&1 | awk '{ print $$2 }'))
+	$(eval PYTHON_NAME=python$(PYTHON_VERSION))
+	$(eval PYTHON_CI_DIR=$(ROOT_DIR)/$(PYTHON_NAME))
+	$(eval VIRTUALENV_DIR=$(PYTHON_CI_DIR)/$(VIRTUALENV_NAME))
+	@echo "PYTHON_VERSION=$(PYTHON_VERSION)"
+	@echo "PYTHON_NAME=$(PYTHON_NAME)"
+	@echo "PYTHON_CI_DIR=$(PYTHON_CI_DIR)"
+	@echo "VIRTUALENV_DIR=$(VIRTUALENV_DIR)"
 
 # @todo print test converage
 # @todo print code metrics
