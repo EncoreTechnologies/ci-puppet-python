@@ -218,13 +218,17 @@ virtualenv:
 	@echo
 	@echo "==================== virtualenv ===================="
 	@echo
+# if [ ! -d "$(VIRTUALENV_DIR)" ]; then \
+# 	if [ "$(PYTHON_EXE)" = "python3" ]; then \
+# 		$(PYTHON_EXE) -m venv $(VIRTUALENV_DIR); \
+# 	else \
+# 		virtualenv --python=$(PYTHON_EXE) $(VIRTUALENV_DIR);\
+# 	fi; \
+# fi;
 	if [ ! -d "$(VIRTUALENV_DIR)" ]; then \
-		if [ "$(PYTHON_EXE)" = "python3" ]; then \
-			$(PYTHON_EXE) -m venv $(VIRTUALENV_DIR); \
-		else \
-			virtualenv --python=$(PYTHON_EXE) $(VIRTUALENV_DIR);\
-		fi; \
+		virtualenv --python=$(PYTHON_EXE) $(VIRTUALENV_DIR);\
 	fi;
+
 
 .PHONY: .clean-virtualenv
 .clean-virtualenv:
