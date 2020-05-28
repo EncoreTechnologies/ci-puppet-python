@@ -204,6 +204,7 @@ requirements:
 	@echo
 	@echo "==================== requirements ===================="
 	@echo
+	cat ~/.pydistutils.cfg
 	ls $(PYTHON_CI_DIR)
 	ls $(VIRTUALENV_DIR)
 	ls $(VIRTUALENV_DIR)/bin
