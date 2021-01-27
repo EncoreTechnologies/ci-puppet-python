@@ -139,7 +139,7 @@ list:
 	@echo "==================== sandbox ===================="
 	@echo
 	rm -rf $(SANDBOX_DIR)
-	git clone 'https://github.com/puppetlabs/puppetlabs-python_task_helper.git' --depth 1 --single-branch --branch master $(SANDBOX_DIR)/python_task_helper
+	git clone 'https://github.com/puppetlabs/puppetlabs-python_task_helper.git' --depth 1 --single-branch --branch main $(SANDBOX_DIR)/python_task_helper
 #	cp -r $(PYMODULE_TEST_DIR)/ $(SANDBOX_DIR)/
 #cp -r $(PYMODULE_FILES_DIR)/ $(SANDBOX_DIR)/
 #cp -r $(PYMODULE_TASKS_DIR)/ $(SANDBOX_DIR)/
