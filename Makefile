@@ -16,6 +16,8 @@ JSON_FILES := $(shell git ls-files '*.json')
 PY_FILES   := $(shell git ls-files '*.py')
 SANDBOX_DIR ?= $(ROOT_DIR)/sandbox
 TEST_COVERAGE_DIR ?= $(ROOT_DIR)/cover
+PUPPET_CONFIGS_BRANCH ?= master
+PUPPET_CONFIGS_DIR ?= $(CI_DIR)/puppet/
 
 ### python 2/3 specific stuff
 PYTHON_EXE ?= python
@@ -48,7 +50,7 @@ python2: .python2 .pythonvars all
 python3: .python3 .pythonvars all
 
 .PHONY: clean
-clean: .clean-virtualenv .clean-test-coverage .clean-sandbox
+clean: .clean-virtualenv .clean-puppetlaps-python-repo .clean-test-coverage .clean-sandbox
 
 .PHONY: lint
 lint: virtualenv requirements flake8 pylint json-lint yaml-lint
@@ -57,7 +59,7 @@ lint: virtualenv requirements flake8 pylint json-lint yaml-lint
 flake8: virtualenv requirements .flake8
 
 .PHONY: pylint
-pylint: virtualenv requirements .pylint
+pylint: virtualenv requirements .clone-st2-repo .pylint
 
 .PHONY: json-lint
 pylint: virtualenv requirements .json-lint
@@ -95,6 +97,32 @@ list:
 		echo "Checking $$py"; \
 		flake8 --config $(CI_DIR)/lint-configs/python/.flake8 $$py || exit 1; \
 	done
+
+
+.PHONY: .clone-puppetlaps-python-repo
+.clone-puppetlaps-python-repo:
+	@echo
+	@echo "==================== cloning Puppetlabs python repo ===================="
+	@echo
+	@echo "Start Time = `date --iso-8601=ns`"
+	if [ ! -d "$(PUPPET_CONFIGS_DIR)" ]; then \
+		git clone https://github.com/puppetlabs/puppetlabs-python_task_helper --depth 1 --single-branch --branch $(PUPPET_CONFIGS_BRANCH) $(PUPPET_CONFIGS_DIR); \
+		export PT__installdir = "$(PUPPET_CONFIGS_DIR)"
+	else \
+		cd "$(PUPPET_CONFIGS_DIR)"; \
+		git pull; \
+	fi;
+	@echo "End Time = `date --iso-8601=ns`"
+
+
+.PHONY: .clean-puppetlaps-python-repo
+.clean-puppetlaps-python-repo:
+	@echo
+	@echo "==================== cleaning Puppetlabs python repo ===================="
+	@echo
+	@echo "Start Time = `date --iso-8601=ns`"
+	rm -rf $(PUPPET_CONFIGS_DIR)
+	@echo "End Time = `date --iso-8601=ns`"
 
 
 .PHONY: .pylint
