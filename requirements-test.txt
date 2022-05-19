@@ -6,3 +6,5 @@ nose-timer
 nose-parallel
 coverage
 coveralls
+cryptography==3.4.7
+python-keyczar==0.716
