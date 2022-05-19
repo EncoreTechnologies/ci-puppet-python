@@ -103,9 +103,9 @@ list:
 	@echo "==================== pylint ===================="
 	@echo
 	. $(VIRTUALENV_DIR)/bin/activate; \
-	for py in $(PY_FILES); do \
+	for p in $(PY_FILES); do \
 		echo "Checking $$py"; \
-		python -m pylint -E --rcfile=$(CI_DIR)/lint-configs/python/.pylintrc $py && echo "--> No pylint issues found in file: $$py." || exit 1; \
+		python -m pylint -E --rcfile=$(CI_DIR)/lint-configs/python/.pylintrc $p && echo "--> No pylint issues found in file: $$p." || exit 1; \
 	done
 
 
