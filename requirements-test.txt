@@ -6,3 +6,4 @@ nose-timer
 nose-parallel
 coverage
 coveralls
+cryptography
