@@ -38,7 +38,7 @@ PYMODULE_PYTHON_FILES_NOTDIR := $(notdir $(PYMODULE_PYTHON_FILES))
 # remove file extensions
 PYMODULE_PYTHON_FILES_BASENAME := $(basename $(PYMODULE_PYTHON_FILES_NOTDIR))
 # make into a comma,separated,list
-PYMODULE_PYTHON_FILES_COMMA := $(subst $(space_char),$(PYMODULE_PYTHON_FILES))
+PYMODULE_PYTHON_FILES_COMMA := $(subst $(space_char),$(comma),$(PYMODULE_PYTHON_FILES))
 
 .PHONY: all
 all: virtualenv requirements lint test-python test-coveralls
