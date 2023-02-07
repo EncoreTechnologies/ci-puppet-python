@@ -186,7 +186,7 @@ list:
 	@echo
 	. $(VIRTUALENV_DIR)/bin/activate; \
 	if [ -d "$(PYMODULE_TEST_DIR)" ]; then \
-		PT__installdir=$(SANDBOX_DIR) nosetests --rednose --immediate --with-parallel -s -v --with-coverage --cover-inclusive --cover-package=$(PYMODULE_PYTHON_FILES_COMMA) --exe $(PYMODULE_TEST_DIR) || exit 1; \
+		PT__installdir=$(SANDBOX_DIR) nosetests --rednose --immediate --with-parallel -s -v --with-coverage --cover-inclusive --cover-package=st2_task_base tasks/key_decrypt --exe $(PYMODULE_TEST_DIR) || exit 1; \
 	else \
 		echo "test/ directory not found: $(PYMODULE_TEST_DIR)";\
 	fi;
