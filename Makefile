@@ -188,7 +188,7 @@ list:
 	if [ -d "$(PYMODULE_TEST_DIR)" ]; then \
 		pwd; \
 		ls; \
-		PT__installdir=$(SANDBOX_DIR) nosetests --rednose --immediate --with-parallel -s -v --with-coverage --cover-inclusive --cover-package=$(PYMODULE_PYTHON_FILES_COMMA) --exe $(PYMODULE_TEST_DIR) || exit 1; \
+		PT__installdir=$(SANDBOX_DIR) nosetests --rednose --immediate --with-parallel -s -v --with-coverage --cover-inclusive --cover-package=$(PYMODULE_PYTHON_FILES) --exe $(PYMODULE_TEST_DIR) || exit 1; \
 	else \
 		echo "test/ directory not found: $(PYMODULE_TEST_DIR)";\
 	fi;
