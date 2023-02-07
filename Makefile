@@ -32,13 +32,14 @@ space_char :=
 space_char +=
 comma := ,
 PYMODULE_PYTHON_FILES := $(wildcard $(PYMODULE_FILES_DIR)/*.py)
-PYMODULE_PYTHON_FILES += $(wildcard $(PYMODULE_TASKS_DIR)/*.py)
+PYMODULE_PYTHON_FILES_TASKS := $(wildcard $(PYMODULE_TASKS_DIR)/*.py)
 # remove leading file/path/components
 PYMODULE_PYTHON_FILES_NOTDIR := $(notdir $(PYMODULE_PYTHON_FILES))
 # remove file extensions
 PYMODULE_PYTHON_FILES_BASENAME := $(basename $(PYMODULE_PYTHON_FILES_NOTDIR))
+PYMODULE_PYTHON_FILES_BASENAME += $(PYMODULE_PYTHON_FILES_TASKS)
 # make into a comma,separated,list
-PYMODULE_PYTHON_FILES_COMMA := $(subst $(space_char),$(comma),$(PYMODULE_PYTHON_FILES))
+PYMODULE_PYTHON_FILES_COMMA := $(subst $(space_char),$(comma),$(PYMODULE_PYTHON_FILES_BASENAME))
 
 .PHONY: all
 all: virtualenv requirements lint test-python test-coveralls
@@ -188,7 +189,7 @@ list:
 	if [ -d "$(PYMODULE_TEST_DIR)" ]; then \
 		pwd; \
 		ls; \
-		PT__installdir=$(SANDBOX_DIR) nosetests --rednose --immediate --with-parallel -s -v --with-coverage --cover-inclusive --cover-package=$(PYMODULE_PYTHON_FILES) --exe $(PYMODULE_TEST_DIR) || exit 1; \
+		PT__installdir=$(SANDBOX_DIR) nosetests --rednose --immediate --with-parallel -s -v --with-coverage --cover-inclusive --cover-package=$(PYMODULE_PYTHON_FILES_BASENAME) --exe $(PYMODULE_TEST_DIR) || exit 1; \
 	else \
 		echo "test/ directory not found: $(PYMODULE_TEST_DIR)";\
 	fi;
