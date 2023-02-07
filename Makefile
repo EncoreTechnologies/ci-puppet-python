@@ -187,8 +187,6 @@ list:
 	@echo
 	. $(VIRTUALENV_DIR)/bin/activate; \
 	if [ -d "$(PYMODULE_TEST_DIR)" ]; then \
-		pwd; \
-		ls; \
 		PT__installdir=$(SANDBOX_DIR) nosetests --rednose --immediate --with-parallel -s -v --with-coverage --cover-inclusive --cover-package=$(PYMODULE_PYTHON_FILES_BASENAME) --exe $(PYMODULE_TEST_DIR) || exit 1; \
 	else \
 		echo "test/ directory not found: $(PYMODULE_TEST_DIR)";\
@@ -202,7 +200,7 @@ list:
 	@echo
 	. $(VIRTUALENV_DIR)/bin/activate; \
 	if [ -d "$(PYMODULE_TEST_DIR)" ]; then \
-		PT__installdir=$(SANDBOX_DIR) nosetests -s -v --rednose --immediate --with-parallel --with-coverage --cover-inclusive --cover-erase --cover-package=$(PYMODULE_PYTHON_FILES_COMMA) --cover-html --exe $(PYMODULE_TEST_DIR) || exit 1; \
+		PT__installdir=$(SANDBOX_DIR) nosetests -s -v --rednose --immediate --with-parallel --with-coverage --cover-inclusive --cover-erase --cover-package=$(PYMODULE_PYTHON_FILES_BASENAME) --cover-html --exe $(PYMODULE_TEST_DIR) || exit 1; \
 	else \
 		echo "test/ directory not found: $(PYMODULE_TEST_DIR)";\
 	fi;
